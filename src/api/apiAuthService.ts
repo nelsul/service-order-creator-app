@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:3016/api' // Replace with your API URL
+const API_URL = 'http://localhost:3016/api'
 
 export async function registerUser(
   name: string,
@@ -23,7 +23,6 @@ export async function registerUser(
 
     return response.data
   } catch (error) {
-    console.error('Registration error:', error)
     throw error
   }
 }
@@ -39,11 +38,15 @@ export async function loginUser(email: string, password: string) {
       throw Error('Invalid response from API')
     }
 
-    localStorage.setItem('token', response.data.token)
+    console.log(response.data)
+
+    localStorage.setItem('userToken', response.data.token)
+    localStorage.setItem('userName', response.data.name)
+    localStorage.setItem('userEmail', response.data.email)
+    localStorage.setItem('userPictureId', response.data.profilePictureFile)
 
     return response.data
   } catch (error) {
-    console.error('Registration error:', error)
     throw error
   }
 }

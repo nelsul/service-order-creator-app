@@ -1,12 +1,21 @@
 <script setup lang="ts">
-import { registerUser } from '@/api/authService'
+import { registerUser } from '@/api/apiAuthService'
 import BackButtonComponent from '@/components/BackButtonComponent.vue'
 import CardComponent from '@/components/CardComponent.vue'
+import { getUserData } from '@/services/userService'
 import type { AxiosError } from 'axios'
-import { ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+
+onBeforeMount(() => {
+  try {
+    if (getUserData()) {
+      router.push('/service-orders')
+    }
+  } catch {}
+})
 
 const name = ref('')
 const email = ref('')

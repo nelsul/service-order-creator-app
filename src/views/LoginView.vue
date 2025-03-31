@@ -1,12 +1,21 @@
 <script setup lang="ts">
-import { loginUser } from '@/api/authService'
+import { loginUser } from '@/api/apiAuthService'
 import BackButtonComponent from '@/components/BackButtonComponent.vue'
 import CardComponent from '@/components/CardComponent.vue'
+import { getUserData } from '@/services/userService'
 import type { AxiosError } from 'axios'
-import { ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 
 const router = useRouter()
+
+onBeforeMount(() => {
+  try {
+    if (getUserData()) {
+      router.push('/service-orders')
+    }
+  } catch {}
+})
 
 const email = ref('')
 const password = ref('')
@@ -17,7 +26,7 @@ async function login() {
     const response = await loginUser(email.value, password.value)
 
     if (response) {
-      router.push('/')
+      router.push('/service-orders')
     }
   } catch (error) {
     if ((error as AxiosError).status == 400) {
