@@ -2,7 +2,7 @@ import type { ServiceOrder, ServiceOrderOptions } from '@/interfaces/ServiceOrde
 import { getUserData } from '@/services/userService'
 import axios from 'axios'
 
-const API_URL = 'http://localhost:3016/api/service-order'
+const API_URL = import.meta.env.VITE_API_URL + '/service-order'
 
 export async function createServiceOrder(
   title: string,

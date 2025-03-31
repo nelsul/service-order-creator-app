@@ -1,7 +1,7 @@
 import { insertUserData } from '@/services/userService'
 import axios from 'axios'
 
-const API_URL = 'http://localhost:3016/api'
+const API_URL = import.meta.env.VITE_API_URL
 
 export async function registerUser(
   name: string,

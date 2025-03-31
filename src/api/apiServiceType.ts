@@ -2,7 +2,7 @@ import type { ServiceType } from '@/interfaces/ServiceType'
 import { getUserData } from '@/services/userService'
 import axios from 'axios'
 
-const API_URL = 'http://localhost:3016/api/service-type'
+const API_URL = import.meta.env.VITE_API_URL + '/service-type'
 
 export async function getServiceType(id: number): Promise<ServiceType> {
   try {
