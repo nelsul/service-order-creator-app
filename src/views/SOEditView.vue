@@ -46,6 +46,7 @@ async function fetchServiceOrder() {
 // Save Service Order
 async function saveServiceOrder() {
   isSaving.value = true
+
   try {
     await updateServiceOrder(serviceOrderId, title.value, description.value)
     alert('Service Order Updated!')

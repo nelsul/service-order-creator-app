@@ -40,6 +40,21 @@ export async function getServiceOrder(id: string) {
   }
 }
 
+export async function getAllServiceOrders() {
+  try {
+    const response = await axios.get(`${API_URL}`, {
+      headers: {
+        Authorization: `Bearer ${getUserData().token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
 export async function updateServiceOrder(
   id: string,
   title: string | null = null,
