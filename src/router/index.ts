@@ -21,8 +21,13 @@ const router = createRouter({
     },
     {
       path: '/service-orders',
-      name: 'service-orders',
+      name: 'serviceOrders',
       component: () => import('../views/SOListView.vue'),
+    },
+    {
+      path: '/service-orders/:id/edit',
+      name: 'serviceOrdersEdit',
+      component: () => import('../views/SOEditView.vue'),
     },
   ],
 })

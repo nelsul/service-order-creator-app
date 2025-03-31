@@ -2,7 +2,7 @@
 import { registerUser } from '@/api/apiAuthService'
 import BackButtonComponent from '@/components/BackButtonComponent.vue'
 import CardComponent from '@/components/CardComponent.vue'
-import { getUserData } from '@/services/userService'
+import { isLogged } from '@/services/userService'
 import type { AxiosError } from 'axios'
 import { onBeforeMount, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -10,11 +10,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 onBeforeMount(() => {
-  try {
-    if (getUserData()) {
-      router.push('/service-orders')
-    }
-  } catch {}
+  isLogged(router)
 })
 
 const name = ref('')

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { removeUserData } from '@/services/userService'
+import { getUserPictureUrl } from '@/api/apiUserService'
+import { getUserData, removeUserData } from '@/services/userService'
 import { useRouter } from 'vue-router'
 
-defineProps<{ title: string; userPictureUrl: string }>()
+defineProps<{ title: string }>()
 
 const router = useRouter()
 
@@ -21,14 +22,16 @@ function logout() {
       <div class="d-flex align-items-center">
         <!-- User Picture -->
         <img
-          :src="userPictureUrl"
+          :src="getUserPictureUrl(getUserData().pictureId)"
           alt="Profile"
           class="rounded-circle mr-2"
           style="width: 40px; height: 40px; object-fit: cover"
         />
 
         <!-- Logout Button -->
-        <button class="btn btn-link text-danger btn-sm" @click="logout">Logout</button>
+        <button class="btn btn-link text-danger btn-sm" @click="logout">
+          <i class="bi bi-box-arrow-right" style="font-size: 1.5rem"></i>
+        </button>
       </div>
     </div>
   </nav>

@@ -1,3 +1,5 @@
+import type { Router } from 'vue-router'
+
 export function getUserData(): { name: string; email: string; pictureId: string; token: string } {
   if (
     !localStorage.getItem('userName') ||
@@ -29,4 +31,20 @@ export function removeUserData() {
   localStorage.removeItem('userEmail')
   localStorage.removeItem('userPictureId')
   localStorage.removeItem('userToken')
+}
+
+export function isLogged(router: Router) {
+  try {
+    if (getUserData()) {
+      router.push('/service-orders')
+    }
+  } catch {}
+}
+
+export function isNotLogged(router: Router) {
+  try {
+    getUserData()
+  } catch {
+    router.push('/login')
+  }
 }

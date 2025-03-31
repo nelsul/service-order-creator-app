@@ -1,6 +1,5 @@
 <script setup lang="ts">
 function hasHistory(): boolean {
-  console.log(window.history)
   return window.history.length > 2
 }
 
