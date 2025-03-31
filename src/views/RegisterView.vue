@@ -1,7 +1,12 @@
 <script setup lang="ts">
+import { registerUser } from '@/api/authService'
 import BackButtonComponent from '@/components/BackButtonComponent.vue'
 import CardComponent from '@/components/CardComponent.vue'
+import type { AxiosError } from 'axios'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const name = ref('')
 const email = ref('')
@@ -19,11 +24,28 @@ function handleFileUpload(event: Event) {
   }
 }
 
-function register() {
-  console.log('Name:', name.value)
-  console.log('Email:', email.value)
-  console.log('Password:', password.value)
-  console.log('Profile Picture:', profilePicture.value)
+async function register() {
+  if (name.value && email.value && password.value && profilePicture.value) {
+    try {
+      const response = await registerUser(
+        name.value,
+        email.value,
+        password.value,
+        profilePicture.value,
+      )
+
+      if (response) {
+        router.push('/login')
+      }
+    } catch (error) {
+      if ((error as AxiosError).status == 400) {
+        alert('Invalid data for login')
+        return
+      }
+
+      alert((error as Error).message)
+    }
+  }
 }
 </script>
 

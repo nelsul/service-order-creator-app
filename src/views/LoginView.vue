@@ -1,19 +1,30 @@
 <script setup lang="ts">
+import { loginUser } from '@/api/authService'
 import BackButtonComponent from '@/components/BackButtonComponent.vue'
 import CardComponent from '@/components/CardComponent.vue'
+import type { AxiosError } from 'axios'
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const email = ref('')
 const password = ref('')
-const errorMessage = ref('')
+// const errorMessage = ref('')
 
 async function login() {
-  if (email.value === 'user@example.com' && password.value === 'password123') {
-    // localStorage.setItem('token', 'your-jwt-token') // Simulated token storage
-    // router.push('/dashboard') // Redirect after login
-  } else {
-    errorMessage.value = 'Invalid email or password'
+  try {
+    const response = await loginUser(email.value, password.value)
+
+    if (response) {
+      router.push('/')
+    }
+  } catch (error) {
+    if ((error as AxiosError).status == 400) {
+      alert('Invalid data for login')
+      return
+    }
+    alert((error as Error).message)
   }
 }
 </script>
