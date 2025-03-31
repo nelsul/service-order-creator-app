@@ -1,3 +1,4 @@
+import { insertUserData } from '@/services/userService'
 import axios from 'axios'
 
 const API_URL = 'http://localhost:3016/api'
@@ -38,12 +39,12 @@ export async function loginUser(email: string, password: string) {
       throw Error('Invalid response from API')
     }
 
-    console.log(response.data)
-
-    localStorage.setItem('userToken', response.data.token)
-    localStorage.setItem('userName', response.data.name)
-    localStorage.setItem('userEmail', response.data.email)
-    localStorage.setItem('userPictureId', response.data.profilePictureFile)
+    insertUserData(
+      response.data.name,
+      response.data.email,
+      response.data.profilePictureFile,
+      response.data.token,
+    )
 
     return response.data
   } catch (error) {

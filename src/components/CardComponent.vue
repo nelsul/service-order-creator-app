@@ -1,7 +1,7 @@
 <script setup lang="ts">
-defineProps({
-  maxWidht: Number,
-})
+defineProps<{
+  maxWidht: number
+}>()
 </script>
 
 <template>

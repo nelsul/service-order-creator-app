@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getUserPictureUrl } from '@/api/apiUserService'
+import NavBarComponent from '@/components/NavBarComponent.vue'
 import { getUserData } from '@/services/userService'
 import { onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
@@ -15,5 +17,8 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <h1>Test</h1>
+  <NavBarComponent
+    title="Service Orders Creator"
+    :userPictureUrl="getUserPictureUrl(getUserData().pictureId)"
+  />
 </template>

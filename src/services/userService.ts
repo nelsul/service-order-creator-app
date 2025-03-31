@@ -5,10 +5,7 @@ export function getUserData(): { name: string; email: string; pictureId: string;
     !localStorage.getItem('userPictureId') ||
     !localStorage.getItem('userToken')
   ) {
-    localStorage.removeItem('userName')
-    localStorage.removeItem('userEmail')
-    localStorage.removeItem('userPictureId')
-    localStorage.removeItem('userToken')
+    removeUserData()
 
     throw Error('invalid user data')
   }
@@ -18,4 +15,18 @@ export function getUserData(): { name: string; email: string; pictureId: string;
     pictureId: localStorage.getItem('userPictureId')!,
     token: localStorage.getItem('userToken')!,
   }
+}
+
+export function insertUserData(name: string, email: string, pictureId: string, token: string) {
+  localStorage.setItem('userName', name)
+  localStorage.setItem('userEmail', email)
+  localStorage.setItem('userPictureId', pictureId)
+  localStorage.setItem('userToken', token)
+}
+
+export function removeUserData() {
+  localStorage.removeItem('userName')
+  localStorage.removeItem('userEmail')
+  localStorage.removeItem('userPictureId')
+  localStorage.removeItem('userToken')
 }
