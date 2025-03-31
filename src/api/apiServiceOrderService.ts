@@ -88,3 +88,66 @@ export async function updateServiceOrder(
     throw error
   }
 }
+
+export async function addServiceOrderImage(id: string, image: File): Promise<ServiceOrder> {
+  try {
+    const formData = new FormData()
+    formData.append('id', id)
+    formData.append('image', image)
+    const response = await axios.post(`${API_URL}/image`, formData, {
+      headers: {
+        Authorization: `Bearer ${getUserData().token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function getServiceOrderImage(
+  id: string,
+  imageId: string,
+  width: number = 200,
+  height?: number,
+) {
+  try {
+    let url = `${API_URL}/image-base64?Id=${id}&FileName=${imageId}&Widht=${width}`
+
+    if (height) {
+      url += `&Height=${height}`
+    }
+
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${getUserData().token}`,
+        responseType: 'blob',
+      },
+    })
+
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function removeServiceOrderImage(id: string, imageId: string): Promise<ServiceOrder> {
+  try {
+    const response = await axios.delete(`${API_URL}/image`, {
+      headers: {
+        Authorization: `Bearer ${getUserData().token}`,
+        'Content-Type': 'application/json',
+      },
+      data: {
+        id: id,
+        imageFileName: imageId,
+      },
+    })
+
+    return response.data
+  } catch (error) {
+    throw error
+  }
+}

@@ -2,7 +2,13 @@
 import { ref, onMounted, onBeforeMount, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { isNotLogged } from '@/services/userService'
-import { getServiceOrder, updateServiceOrder } from '@/api/apiServiceOrderService'
+import {
+  addServiceOrderImage,
+  getServiceOrder,
+  getServiceOrderImage,
+  removeServiceOrderImage,
+  updateServiceOrder,
+} from '@/api/apiServiceOrderService'
 import NavBarComponent from '@/components/NavBarComponent.vue'
 import BackButtonComponent from '@/components/BackButtonComponent.vue'
 import { getAllServiceTypes } from '@/api/apiServiceType'
@@ -18,12 +24,14 @@ const title = ref('')
 const description = ref('')
 const serviceTypes = ref<ServiceType[]>([])
 const selectedType = ref<number | null>(null)
+const images = ref<{ id: string; base64: string }[]>([])
 
 const typeOptions = ref<ServiceOrderOptions | null>(null)
 
 const isLoading = ref(true)
 const isTypesLoading = ref(false)
 const isSaving = ref(false)
+const uploading = ref(false)
 
 onBeforeMount(() => {
   isNotLogged(router)
@@ -79,6 +87,7 @@ async function fetchServiceOrder() {
     description.value = response.description
     selectedType.value = response.serviceTypeId ?? null
     typeOptions.value = response.options ?? null
+    images.value = await setImageList(response.imageFiles)
   } catch (e) {
     alert((e as Error).message)
   } finally {
@@ -86,7 +95,6 @@ async function fetchServiceOrder() {
   }
 }
 
-// Save Service Order
 async function saveServiceOrder() {
   isSaving.value = true
 
@@ -99,11 +107,53 @@ async function saveServiceOrder() {
       typeOptions.value,
     )
     alert('Service Order Updated!')
-    // router.push('/service-orders')
+    router.push('/service-orders')
   } catch (e) {
     alert((e as Error).message)
   } finally {
     isSaving.value = false
+  }
+}
+
+const handleImageUpload = async (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+
+  if (file) {
+    uploading.value = true
+
+    try {
+      const response = await addServiceOrderImage(serviceOrderId, file)
+
+      images.value = await setImageList(response.imageFiles)
+      uploading.value = false
+    } catch (e) {
+      alert((e as Error).message)
+      uploading.value = false
+    }
+  }
+}
+
+async function setImageList(fileNameList: string[]): Promise<{ id: string; base64: string }[]> {
+  const imageList: { id: string; base64: string }[] = []
+
+  for (let i = 0; i < fileNameList.length; i++) {
+    const newUrl = await getServiceOrderImage(serviceOrderId, fileNameList[i], 200)
+
+    imageList.push({ id: fileNameList[i], base64: newUrl })
+  }
+
+  return imageList
+}
+
+const deleteImage = async (imageId: string) => {
+  try {
+    const response = await removeServiceOrderImage(serviceOrderId, imageId)
+
+    images.value = await setImageList(response.imageFiles)
+  } catch (e) {
+    alert((e as Error).message)
+    uploading.value = false
   }
 }
 </script>
@@ -174,6 +224,64 @@ async function saveServiceOrder() {
         <span v-if="isSaving" class="spinner-border spinner-border-sm"></span>
         Save Changes
       </button>
+
+      <div class="mt-5">
+        <!-- Image Upload Section -->
+        <h3>Upload Image</h3>
+        <input type="file" @change="handleImageUpload" />
+
+        <div v-if="uploading" class="text-center mt-3">Uploading...</div>
+
+        <h3 class="mt-5">Uploaded Images</h3>
+        <!-- Display Uploaded Images -->
+        <div v-if="images.length === 0">No images uploaded yet.</div>
+        <div class="image-list">
+          <div
+            v-for="image in images"
+            :key="image.id"
+            class="image-container position-relative mr-3"
+          >
+            <img
+              :src="'data:image/jpeg;base64,' + image.base64"
+              alt="Uploaded Image"
+              class="img-thumbnail"
+            />
+            <!-- Delete Button -->
+            <button
+              @click="deleteImage(image.id)"
+              class="btn-close position-absolute"
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.image-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.image-container {
+  position: relative;
+  width: 200px;
+}
+
+img {
+  width: 100%;
+  height: auto;
+}
+
+.btn-close {
+  top: -15px;
+  right: -20px;
+  background-color: rgb(201, 58, 58);
+  color: white;
+  border-radius: 50%;
+  font-size: 1.5rem;
+}
+</style>
