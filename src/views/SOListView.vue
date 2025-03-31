@@ -48,8 +48,6 @@ async function createNew() {
     }
 
     router.push(`/service-orders/${response.id}/edit`)
-
-    console.log(response)
   } catch (e) {
     alert((e as Error).message)
   }
